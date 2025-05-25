@@ -22,7 +22,7 @@ function Register({ onRegisterSuccess }) {
         setError("");
 
         try {
-            await axios.post("http://localhost:5138/api/Auth/register", formData);
+            await axios.post("http://localhost:7006/api/Auth/register", formData);
             if (onRegisterSuccess) {
                 onRegisterSuccess(); // AuthPage içindeki login ekranýna geç
             }
