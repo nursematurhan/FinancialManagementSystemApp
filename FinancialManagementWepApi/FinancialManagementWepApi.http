@@ -1,0 +1,6 @@
+@FinancialManagementWepApi_HostAddress = http://localhost:5224
+
+GET {{FinancialManagementWepApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
