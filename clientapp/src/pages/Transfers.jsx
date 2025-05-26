@@ -2,7 +2,6 @@
 import {
     getMyTransfers,
     addTransfer,
-    updateTransfer,
     deleteTransfer
 } from "../services/api";
 
@@ -203,12 +202,7 @@ const Transfers = () => {
                                 </div>
                             </div>
                             <div>
-                                <button
-                                    onClick={() => handleEdit(t)}
-                                    className="btn btn-warning btn-sm me-2"
-                                >
-                                    Edit
-                                </button>
+                                
                                 <button
                                     onClick={() => handleDelete(t.id)}
                                     className="btn btn-danger btn-sm"

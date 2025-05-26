@@ -103,24 +103,7 @@ namespace FinancialManagementWepApi.Controllers
             return CreatedAtAction(nameof(GetTransfer), new { id = transfer.Id }, transfer);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTransfer(int id, Transfer updated)
-        {
-            var userId = User.FindFirstValue("uid");
-            if (id != updated.Id) return BadRequest();
-
-            var existing = await _context.Transfers
-                .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.Id == id && t.SenderId == userId);
-
-            if (existing == null) return Unauthorized("You can only update your own transfers.");
-
-            updated.SenderId = userId;
-            _context.Entry(updated).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
+       
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTransfer(int id)

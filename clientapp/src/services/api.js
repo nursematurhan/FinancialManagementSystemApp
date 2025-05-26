@@ -45,9 +45,6 @@ export const addTransfer = (transfer) => {
     return axios.post(`${API_BASE}/transfers`, transfer, getAuthHeaders());
 };
 
-export const updateTransfer = (id, transfer) => {
-    return axios.put(`${API_BASE}/transfers/${id}`, transfer, getAuthHeaders());
-};
 
 export const deleteTransfer = (id) => {
     return axios.delete(`${API_BASE}/transfers/${id}`, getAuthHeaders());
@@ -69,7 +66,6 @@ export const getExchangeRate = (currencyCode) => {
 };
 
 //Dashboard
-
 export const getBalance = () => {
     return axios.get(`${API_BASE}/user/balance`, getAuthHeaders());
 };
