@@ -13,6 +13,7 @@ const Transfers = () => {
     const [note, setNote] = useState("");
     const [error, setError] = useState("");
     const [editId, setEditId] = useState(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         fetchTransfers();
@@ -20,7 +21,7 @@ const Transfers = () => {
 
     const fetchTransfers = async () => {
         try {
-            const res = await getMyTransfers(); 
+            const res = await getMyTransfers();
             setTransfers(res.data);
         } catch (err) {
             console.error(err);
@@ -33,7 +34,7 @@ const Transfers = () => {
         setError("");
 
         const transferData = {
-            recipientId, // ⚠️ recipient değil!
+            recipientId,
             amount: parseFloat(amount),
             note,
         };
@@ -72,6 +73,12 @@ const Transfers = () => {
             setError("Failed to delete transfer.");
         }
     };
+
+    const filteredTransfers = transfers.filter(t =>
+        !searchTerm ||
+        (t.recipient?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            t.recipientId?.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
 
     return (
         <div className="container mt-5">
@@ -113,33 +120,48 @@ const Transfers = () => {
                 {error && <div className="alert alert-danger mt-3">{error}</div>}
             </form>
 
+            {/* 🔍 Search Filter */}
+            <div className="mb-4">
+                <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search by recipient name or ID"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+            </div>
+
             <ul className="list-group">
-                {transfers.map((t) => (
-                    <li
-                        key={t.id}
-                        className="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        <div>
-                            <strong>{t.amount} ₺</strong> →{" "}
-                            {t.recipient?.fullName || t.recipientId}
-                            {t.note && <div className="text-muted">Note: {t.note}</div>}
-                        </div>
-                        <div>
-                            <button
-                                onClick={() => handleEdit(t)}
-                                className="btn btn-warning btn-sm me-2"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => handleDelete(t.id)}
-                                className="btn btn-danger btn-sm"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </li>
-                ))}
+                {filteredTransfers.length === 0 ? (
+                    <li className="list-group-item text-muted">No transfers found.</li>
+                ) : (
+                    filteredTransfers.map((t) => (
+                        <li
+                            key={t.id}
+                            className="list-group-item d-flex justify-content-between align-items-center"
+                        >
+                            <div>
+                                <strong>{t.amount} ₺</strong> →{" "}
+                                {t.recipient?.fullName || t.recipientId}
+                                {t.note && <div className="text-muted">Note: {t.note}</div>}
+                            </div>
+                            <div>
+                                <button
+                                    onClick={() => handleEdit(t)}
+                                    className="btn btn-warning btn-sm me-2"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(t.id)}
+                                    className="btn btn-danger btn-sm"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </li>
+                    ))
+                )}
             </ul>
         </div>
     );

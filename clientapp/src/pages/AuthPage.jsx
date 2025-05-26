@@ -10,12 +10,12 @@ const AuthPage = ({ onLogin }) => {
     };
 
     return (
-        <div className="container mt-5">
-            <div className="card p-4 shadow">
+        <div className="container mt-4">
+
                 {showLogin ? (
                     <>
                         <Login onLogin={onLogin} />
-                        <p className="text-center mt-3">
+                        <p className="text-center mt-1">
                             Don't have an account?{" "}
                             <button onClick={() => setShowLogin(false)} className="btn btn-link p-0">
                                 Register here
@@ -25,15 +25,14 @@ const AuthPage = ({ onLogin }) => {
                 ) : (
                     <>
                         <Register onRegisterSuccess={handleRegisterSuccess} />
-                        <p className="text-center mt-3">
+                        <p className="text-center mt-1">
                             Already have an account?{" "}
-                            <button onClick={() => setShowLogin(true)} className="btn btn-link p-0">
+                            <button onClick={() => setShowLogin(true)} className="btn btn-link p-3">
                                 Login here
                             </button>
                         </p>
                     </>
                 )}
-            </div>
         </div>
     );
 };

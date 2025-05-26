@@ -6,18 +6,14 @@ import Transactions from "./pages/Transactions";
 import Transfers from "./pages/Transfers";
 import AuthPage from "./pages/AuthPage";
 import ExchangeRates from "./pages/ExchangeRates";
+import Dashboard from "./pages/Dashboard"; 
+import Home from "./pages/Home";
 
-const Home = () => (
-    <div className="container mt-5">
-        <h1 className="text-center">Welcome to the Financial Management App</h1>
-        <p className="text-center">Track your expenses, manage transfers, and stay in control.</p>
-    </div>
-);
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem("token"));
 
-    // Sayfa yüklenince token'ý kontrol et
+
     useEffect(() => {
         setToken(localStorage.getItem("token"));
 
@@ -29,7 +25,7 @@ function App() {
         return () => window.removeEventListener("storage", handleStorageChange);
     }, []);
 
-    // Login ve Logout iþlemleri
+
     const handleLogin = () => {
         setToken(localStorage.getItem("token"));
     };
@@ -43,30 +39,34 @@ function App() {
         <Router>
             <Navbar token={token} onLogout={handleLogout} />
             <Routes>
-                {/* Giriþ yapýlmamýþsa ana sayfaya, yapýlmýþsa profile yönlendir */}
-                <Route path="/" element={!token ? <Home /> : <Navigate to="/profile" />} />
+               
+                <Route path="/" element={!token ? <Home /> : <Navigate to="/dashboard" />} />
                 <Route
                     path="/auth"
-                    element={!token ? <AuthPage onLogin={handleLogin} /> : <Navigate to="/profile" />}
+                    element={!token ? <AuthPage onLogin={handleLogin} /> : <Navigate to="/dashboard" />}
                 />
                 <Route path="/exchange" element={<ExchangeRates />} />
 
-                {/* Korumalý rotalar */}
+               
                 {token ? (
                     <>
+                        <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/transactions" element={<Transactions />} />
                         <Route path="/transfers" element={<Transfers />} />
                     </>
                 ) : (
                     <>
+                        <Route path="/dashboard" element={<Navigate to="/auth" />} />
                         <Route path="/profile" element={<Navigate to="/auth" />} />
                         <Route path="/transactions" element={<Navigate to="/auth" />} />
                         <Route path="/transfers" element={<Navigate to="/auth" />} />
                     </>
                 )}
             </Routes>
+            
         </Router>
+
     );
 }
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getProfile, updateProfile } from "../services/api";
+import axios from "axios";
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
@@ -58,6 +59,28 @@ const Profile = () => {
         }
     };
 
+    const handleDelete = async () => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete your account?\nThis action is permanent and will remove all your data."
+        );
+        if (!confirmed) return;
+
+        try {
+            await axios.delete("http://localhost:7006/api/user/profile", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            localStorage.removeItem("token");
+            alert("Your account has been deleted successfully.");
+            navigate("/auth");
+        } catch (err) {
+            console.error("Failed to delete account:", err);
+            setError("Failed to delete account. Please try again later.");
+        }
+    };
+
+
     if (!profile) return <p className="text-center mt-5">Loading...</p>;
 
     return (
@@ -76,8 +99,11 @@ const Profile = () => {
                                     Share your User ID with others to receive transfers.
                                 </small>
                                 <br />
-                                <button className="btn btn-primary mt-3" onClick={() => setEditMode(true)}>
+                                <button className="btn btn-primary mt-3 me-2" onClick={() => setEditMode(true)}>
                                     Edit Profile
+                                </button>
+                                <button className="btn btn-danger mt-3" onClick={handleDelete}>
+                                    Delete Account
                                 </button>
                             </div>
                         ) : (

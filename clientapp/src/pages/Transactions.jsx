@@ -6,12 +6,28 @@ import {
     deleteTransaction,
 } from "../services/api";
 
+const categoryOptions = [
+    "Food", "Transport", "Shopping", "Bills",
+    "Entertainment", "Health", "Other",
+];
+
+const timeOptions = [
+    { label: "All Time", value: "" },
+    { label: "Last 12 Hours", value: "12h" },
+    { label: "Last 7 Days", value: "7d" },
+    { label: "Last 30 Days", value: "30d" },
+    { label: "Last 365 Days", value: "365d" },
+];
+
 const Transactions = () => {
     const [transactions, setTransactions] = useState([]);
     const [amount, setAmount] = useState("");
     const [description, setDescription] = useState("");
+    const [category, setCategory] = useState("");
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState("");
+    const [filterCategory, setFilterCategory] = useState("");
+    const [timeRange, setTimeRange] = useState("");
 
     useEffect(() => {
         fetchTransactions();
@@ -20,7 +36,11 @@ const Transactions = () => {
     const fetchTransactions = async () => {
         try {
             const res = await getTransactions();
-            setTransactions(res.data);
+            const parsed = res.data.map(t => ({
+                ...t,
+                date: new Date(t.date),
+            }));
+            setTransactions(parsed);
         } catch (err) {
             console.error(err);
             setError("Failed to load transactions.");
@@ -34,6 +54,7 @@ const Transactions = () => {
         const newTransaction = {
             amount: parseFloat(amount),
             description,
+            category,
         };
 
         try {
@@ -46,6 +67,7 @@ const Transactions = () => {
 
             setAmount("");
             setDescription("");
+            setCategory("");
             fetchTransactions();
         } catch (err) {
             console.error(err);
@@ -57,6 +79,7 @@ const Transactions = () => {
         setEditId(transaction.id);
         setAmount(transaction.amount);
         setDescription(transaction.description);
+        setCategory(transaction.category || "Other");
     };
 
     const handleDelete = async (id) => {
@@ -68,6 +91,30 @@ const Transactions = () => {
             setError("Failed to delete transaction.");
         }
     };
+
+    const allCategories = [...new Set(transactions.map(t => t.category))];
+
+    const filteredTransactions = transactions.filter((t) => {
+        const matchCategory = !filterCategory || t.category === filterCategory;
+
+        let matchTime = true;
+        if (timeRange) {
+            const now = new Date();
+            let compareDate = new Date();
+
+            if (timeRange.endsWith("h")) {
+                const hours = parseInt(timeRange);
+                compareDate.setHours(now.getHours() - hours);
+            } else if (timeRange.endsWith("d")) {
+                const days = parseInt(timeRange);
+                compareDate.setDate(now.getDate() - days);
+            }
+
+            matchTime = t.date >= compareDate;
+        }
+
+        return matchCategory && matchTime;
+    });
 
     return (
         <div className="container mt-5">
@@ -85,6 +132,19 @@ const Transactions = () => {
                     />
                 </div>
                 <div className="mb-3">
+                    <select
+                        className="form-select"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        required
+                    >
+                        <option value="" disabled>Select Category</option>
+                        {categoryOptions.map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                    </select>
+                </div>
+                <div className="mb-3">
                     <input
                         type="text"
                         className="form-control"
@@ -100,31 +160,57 @@ const Transactions = () => {
                 {error && <div className="alert alert-danger mt-3">{error}</div>}
             </form>
 
+            {/* Filters */}
+            <div className="d-flex gap-3 flex-wrap mb-4">
+                <select
+                    className="form-select w-auto"
+                    value={filterCategory}
+                    onChange={(e) => setFilterCategory(e.target.value)}
+                >
+                    <option value="">All Categories</option>
+                    {allCategories.map(cat => (
+                        <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                </select>
+
+                <select
+                    className="form-select w-auto"
+                    value={timeRange}
+                    onChange={(e) => setTimeRange(e.target.value)}
+                >
+                    {timeOptions.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                </select>
+            </div>
+
             <ul className="list-group">
-                {transactions.map((t) => (
-                    <li
-                        key={t.id}
-                        className="list-group-item d-flex justify-content-between align-items-center"
-                    >
-                        <div>
-                            <strong>{t.amount} ₺</strong> - {t.description}
-                        </div>
-                        <div>
-                            <button
-                                onClick={() => handleEdit(t)}
-                                className="btn btn-sm btn-warning me-2"
-                            >
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => handleDelete(t.id)}
-                                className="btn btn-sm btn-danger"
-                            >
-                                Delete
-                            </button>
-                        </div>
-                    </li>
-                ))}
+                {filteredTransactions.length === 0 ? (
+                    <li className="list-group-item text-muted">No matching transactions found.</li>
+                ) : (
+                    filteredTransactions.map(t => (
+                        <li key={t.id} className="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{t.amount} ₺</strong> - {t.description}
+                                <span className="badge bg-secondary ms-2">{t.category}</span>
+                            </div>
+                            <div>
+                                <button
+                                    onClick={() => handleEdit(t)}
+                                    className="btn btn-sm btn-warning me-2"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(t.id)}
+                                    className="btn btn-sm btn-danger"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </li>
+                    ))
+                )}
             </ul>
         </div>
     );

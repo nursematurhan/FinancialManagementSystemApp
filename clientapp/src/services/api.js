@@ -58,6 +58,7 @@ export const getProfile = () => {
     return axios.get(`${API_BASE}/user/profile`, getAuthHeaders());
 };
 
+
 export const updateProfile = (data) => {
     return axios.put(`${API_BASE}/user/profile`, data, getAuthHeaders());
 };
@@ -67,3 +68,8 @@ export const getExchangeRate = (currencyCode) => {
     return axios.get(`${API_BASE}/realexchangerate/${currencyCode}`);
 };
 
+//Dashboard
+
+export const getBalance = () => {
+    return axios.get(`${API_BASE}/user/balance`, getAuthHeaders());
+};
