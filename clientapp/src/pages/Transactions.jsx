@@ -26,6 +26,7 @@ const Transactions = () => {
     const [category, setCategory] = useState("");
     const [editId, setEditId] = useState(null);
     const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const [filterCategory, setFilterCategory] = useState("");
     const [timeRange, setTimeRange] = useState("");
 
@@ -50,6 +51,7 @@ const Transactions = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        setSuccessMessage("");
 
         const newTransaction = {
             amount: parseFloat(amount),
@@ -60,15 +62,19 @@ const Transactions = () => {
         try {
             if (editId) {
                 await updateTransaction(editId, newTransaction);
+                setSuccessMessage("Transaction updated successfully!");
                 setEditId(null);
             } else {
                 await addTransaction(newTransaction);
+                setSuccessMessage("Transaction added successfully!");
             }
 
             setAmount("");
             setDescription("");
             setCategory("");
             fetchTransactions();
+
+            setTimeout(() => setSuccessMessage(""), 3000);
         } catch (err) {
             console.error(err);
             setError("Failed to save transaction.");
@@ -148,15 +154,16 @@ const Transactions = () => {
                     <input
                         type="text"
                         className="form-control"
-                        placeholder="Description"
+                        placeholder="Description (optional)"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        required
                     />
                 </div>
                 <button type="submit" className="btn btn-primary w-100">
                     {editId ? "Update Transaction" : "Add Transaction"}
                 </button>
+
+                {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
                 {error && <div className="alert alert-danger mt-3">{error}</div>}
             </form>
 
@@ -195,12 +202,14 @@ const Transactions = () => {
                                 <span className="badge bg-secondary ms-2">{t.category}</span>
                             </div>
                             <div>
-                                <button
-                                    onClick={() => handleEdit(t)}
-                                    className="btn btn-sm btn-warning me-2"
-                                >
-                                    Edit
-                                </button>
+                                {!t.category?.startsWith("Transfer") && (
+                                    <button
+                                        onClick={() => handleEdit(t)}
+                                        className="btn btn-sm btn-warning me-2"
+                                    >
+                                        Edit
+                                    </button>
+                                )}
                                 <button
                                     onClick={() => handleDelete(t.id)}
                                     className="btn btn-sm btn-danger"
@@ -208,6 +217,7 @@ const Transactions = () => {
                                     Delete
                                 </button>
                             </div>
+
                         </li>
                     ))
                 )}

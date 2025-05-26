@@ -28,9 +28,14 @@ const Dashboard = () => {
 
                 setProfile(profileRes.data);
                 setBalance(balanceRes.data.balance);
-                setTransactions(transRes.data.slice(-3).reverse());
-                setSentTransfers(sentRes.data.slice(-3).reverse());
-                setReceivedTransfers(receivedRes.data.slice(-3).reverse());
+                setTransactions(
+                    transRes.data
+                        .filter(t => !t.category?.toLowerCase().includes("transfer"))
+                        .slice(-5)
+                        .reverse()
+                );
+                setSentTransfers(sentRes.data.slice(-5).reverse());
+                setReceivedTransfers(receivedRes.data.slice(-5).reverse());
             } catch (err) {
                 console.error("Dashboard fetch error:", err);
             }

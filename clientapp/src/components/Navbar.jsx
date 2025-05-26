@@ -13,7 +13,7 @@ const Navbar = ({ token, onLogout }) => {
     };
 
     return (
-        <nav className="navbar navbar-expand-lg px-4" style={{ backgroundColor: "#83769c" }}>
+        <nav className="navbar navbar-expand-lg px-4" style={{ backgroundColor: "#351b67" }}>
             <Link className="navbar-brand fw-bold text-white" to={token ? "/dashboard" : "/"}>
                 <img
                     src={logo}
@@ -46,15 +46,16 @@ const Navbar = ({ token, onLogout }) => {
                             <li className="nav-item">
                                 <Link className="nav-link text-white" to="/dashboard">Dashboard</Link>
                             </li>
-                            <li className="nav-item">
-                                <Link className="nav-link text-white" to="/profile">Profile</Link>
-                            </li>
+                            
                             <li className="nav-item">
                                 <Link className="nav-link text-white" to="/transactions">Transactions</Link>
                             </li>
                             <li className="nav-item">
                                 <Link className="nav-link text-white" to="/transfers">Transfers</Link>
-                            </li>
+                                </li>
+                                <li className="nav-item">
+                                    <Link className="nav-link text-white" to="/profile">Profile</Link>
+                                </li>
                             <li className="nav-item">
                                 <button
                                     className="btn btn-dark btn-sm"
