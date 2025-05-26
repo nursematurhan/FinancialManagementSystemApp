@@ -1,4 +1,3 @@
-// components/Navbar.jsx
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = ({ token, onLogout }) => {
@@ -6,28 +5,46 @@ const Navbar = ({ token, onLogout }) => {
 
     const handleLogout = () => {
         localStorage.removeItem("token");
-        onLogout(); // App.jsx içindeki setToken'i tetikler
+        onLogout();
         navigate("/login");
     };
 
     return (
-        <nav style={{ padding: "10px", background: "#f5f5f5", display: "flex", gap: "15px" }}>
-            {!token && <Link to="/">Home</Link>}
-            {!token ? (
-                <>
-                    <Link to="/exchange">Exchange Rates</Link>
-                    <Link to="/auth">Login / Register</Link>
-
-
-                </>
-            ) : (
-                <>
-                    <Link to="/profile">Profile</Link>
-                    <Link to="/transactions">Transactions</Link>
-                    <Link to="/transfers">Transfers</Link>
-                    <button onClick={handleLogout}>Logout</button>
-                </>
-            )}
+        <nav className="navbar navbar-expand-lg navbar-light bg-light px-4">
+            <Link className="navbar-brand" to="/">
+                SpentWise
+            </Link>
+            <div className="collapse navbar-collapse">
+                <ul className="navbar-nav ms-auto">
+                    {!token ? (
+                        <>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/exchange">Exchange Rates</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/auth">Login / Register</Link>
+                            </li>
+                        </>
+                    ) : (
+                        <>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/profile">Profile</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/transactions">Transactions</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/transfers">Transfers</Link>
+                            </li>
+                            <li className="nav-item">
+                                <button className="btn btn-outline-danger btn-sm" onClick={handleLogout}>
+                                    Logout
+                                </button>
+                            </li>
+                        </>
+                    )}
+                </ul>
+            </div>
         </nav>
     );
 };

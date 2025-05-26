@@ -20,7 +20,7 @@ const Transfers = () => {
 
     const fetchTransfers = async () => {
         try {
-            const res = await getMyTransfers(); // 🔄 doğru fonksiyon
+            const res = await getMyTransfers(); 
             setTransfers(res.data);
         } catch (err) {
             console.error(err);
