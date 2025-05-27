@@ -20,11 +20,9 @@ const Transfers = () => {
     const [note, setNote] = useState("");
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
-    const [editId, setEditId] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [timeRange, setTimeRange] = useState("");
 
-    
     useEffect(() => {
         fetchTransfers();
     }, []);
@@ -51,14 +49,8 @@ const Transfers = () => {
         };
 
         try {
-            if (editId) {
-                await updateTransfer(editId, transferData);
-                setSuccessMessage("Transfer updated successfully!");
-                setEditId(null);
-            } else {
-                await addTransfer(transferData);
-                setSuccessMessage("Transfer completed successfully!");
-            }
+            await addTransfer(transferData);
+            setSuccessMessage("Transfer completed successfully!");
 
             setRecipientId("");
             setAmount("");
@@ -70,13 +62,6 @@ const Transfers = () => {
             console.error(err);
             setError("Failed to save transfer.");
         }
-    };
-
-    const handleEdit = (transfer) => {
-        setEditId(transfer.id);
-        setRecipientId(transfer.recipientId);
-        setAmount(transfer.amount);
-        setNote(transfer.note || "");
     };
 
     const handleDelete = async (id) => {
@@ -115,7 +100,6 @@ const Transfers = () => {
         return matchesSearch && matchesTime;
     });
 
-
     return (
         <div className="container mt-5">
             <h2 className="mb-4 text-center">Transfers</h2>
@@ -151,7 +135,7 @@ const Transfers = () => {
                     />
                 </div>
                 <button type="submit" className="btn btn-primary w-100">
-                    {editId ? "Update Transfer" : "Send Transfer"}
+                    Send Transfer
                 </button>
 
                 {successMessage && <div className="alert alert-success mt-3">{successMessage}</div>}
@@ -175,9 +159,7 @@ const Transfers = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                
             </div>
-
 
             <ul className="list-group">
                 {filteredTransfers.length === 0 ? (
@@ -202,7 +184,6 @@ const Transfers = () => {
                                 </div>
                             </div>
                             <div>
-                                
                                 <button
                                     onClick={() => handleDelete(t.id)}
                                     className="btn btn-danger btn-sm"
@@ -214,7 +195,6 @@ const Transfers = () => {
                     ))
                 )}
             </ul>
-
         </div>
     );
 };

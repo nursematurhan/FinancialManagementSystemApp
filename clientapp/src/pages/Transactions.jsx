@@ -53,19 +53,24 @@ const Transactions = () => {
         setError("");
         setSuccessMessage("");
 
-        const newTransaction = {
+        const now = new Date();
+
+        const transactionData = {
             amount: parseFloat(amount),
             description,
             category,
+            date: now.toISOString(), // güncel tarih
+            userId: "placeholder",   // backend override edecek
+            id: editId               // önemli!
         };
 
         try {
             if (editId) {
-                await updateTransaction(editId, newTransaction);
+                await updateTransaction(editId, transactionData);
                 setSuccessMessage("Transaction updated successfully!");
                 setEditId(null);
             } else {
-                await addTransaction(newTransaction);
+                await addTransaction(transactionData); // bu kısımda `id` gerekmez
                 setSuccessMessage("Transaction added successfully!");
             }
 

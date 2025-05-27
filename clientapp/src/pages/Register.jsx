@@ -24,7 +24,7 @@ function Register({ onRegisterSuccess }) {
         try {
             await axios.post("http://localhost:7006/api/Auth/register", formData);
             if (onRegisterSuccess) {
-                onRegisterSuccess(); // AuthPage içindeki login ekranýna geç
+                onRegisterSuccess(); 
             }
         } catch (err) {
             console.error(err);
